@@ -1,0 +1,159 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>저울의 연금술사</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#120a2e;--bg2:#2e1060;--ink:#f4efff;--mut:#a99bd6;--gold:#ffd86b;--panel:rgba(255,255,255,.07);--line:rgba(255,255,255,.15);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(1200px 700px at 50% -10%,var(--bg2),var(--bg1)) fixed;background-color:#120a2e;color:var(--ink);font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;overflow-x:hidden;user-select:none}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:12px 14px 40px}
+.top{display:flex;justify-content:space-between;align-items:center}
+h1{font-size:23px;margin:0;background:linear-gradient(90deg,#ffd86b,#ff7ad9,#7ad7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hud{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px;backdrop-filter:blur(6px)}
+.task{text-align:center;margin:8px 0 2px;font-size:17px;line-height:1.5}
+.task b{color:var(--gold)}
+.tries{display:flex;justify-content:center;gap:9px;margin:8px 0;min-height:20px}
+.orb{width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#7ad7ff 40%,#3a6bff);box-shadow:0 0 14px #5ab6ff;transition:.4s}
+.orb.off{background:#2b2350;box-shadow:none;opacity:.55}
+.stage{position:relative;height:340px;margin:6px 0 10px}
+.pillar{position:absolute;left:50%;top:44px;width:14px;height:220px;margin-left:-7px;background:linear-gradient(90deg,#8a6a1f,#ffe08a,#8a6a1f);border-radius:7px}
+.base{position:absolute;left:50%;top:256px;width:160px;height:18px;margin-left:-80px;border-radius:10px;background:linear-gradient(#ffe08a,#8a6a1f);box-shadow:0 0 34px rgba(255,200,80,.45)}
+.beam{position:absolute;left:12%;right:12%;top:40px;height:12px;border-radius:8px;background:linear-gradient(#fff2b8,#d9a62e 60%,#8a6a1f);box-shadow:0 0 24px rgba(255,210,100,.6);transform:rotate(var(--a,0deg));transition:transform 1.3s cubic-bezier(.34,1.56,.5,1)}
+.beam::after{content:"";position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7cf,#e3a92b 55%,#7a5a14);box-shadow:0 0 18px #ffd86b}
+.arm{position:absolute;top:6px;width:0;height:0}
+.arm.l{left:0}.arm.r{left:100%}
+.pan{position:absolute;top:0;left:-62px;width:124px;transform-origin:62px 0;transform:rotate(calc(var(--a,0deg)*-1));transition:transform 1.3s cubic-bezier(.34,1.56,.5,1);z-index:2}
+.st{height:58px;background:linear-gradient(to top right,transparent calc(50% - 1px),#ffe08a 50%,transparent calc(50% + 1px)) left/50% 100% no-repeat,linear-gradient(to top left,transparent calc(50% - 1px),#ffe08a 50%,transparent calc(50% + 1px)) right/50% 100% no-repeat}
+.dish{min-height:62px;border-radius:0 0 60px 60px/0 0 38px 38px;background:linear-gradient(#ffffff1a,#ffffff08);border:2px solid #ffe08a99;border-top-width:4px;padding:8px 8px 16px;display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-content:flex-start;cursor:pointer;box-shadow:0 8px 24px rgba(255,200,80,.25),inset 0 -10px 20px rgba(255,200,80,.12);transition:box-shadow .3s}
+.dish.act{box-shadow:0 0 0 3px #7ad7ff,0 0 28px #7ad7ff}
+.lab{text-align:center;font-size:12px;color:var(--mut);margin-top:4px}
+.g{display:inline-block;width:var(--s,40px);height:calc(var(--s,40px)*1.08);filter:drop-shadow(0 0 5px hsl(var(--h) 100% 60%/.8));cursor:pointer;transition:transform .15s}
+.g:hover{transform:translateY(-3px) scale(1.08)}
+.g i{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-style:normal;font-size:calc(var(--s,40px)*.36);color:#fff;text-shadow:0 1px 2px #0009;padding-bottom:12%;clip-path:polygon(22% 0,78% 0,100% 34%,50% 100%,0 34%);background:linear-gradient(135deg,#fff9 0,transparent 32%),linear-gradient(160deg,hsl(var(--h) 95% 70%),hsl(var(--h) 85% 38%))}
+.g.sus{animation:pu .6s infinite alternate}
+@keyframes pu{to{transform:scale(1.12)}}
+.g.pk{animation:none;transform:scale(1.25);filter:drop-shadow(0 0 12px #fff)}
+.msg{text-align:center;color:var(--mut);font-size:14px;min-height:20px;margin:4px 0 8px}
+.tray{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:12px;border-radius:18px;background:var(--panel);border:1px solid var(--line);min-height:70px}
+.ctr{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;margin:12px 0}
+.b{font:inherit;font-size:16px;padding:10px 16px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.b.main{background:linear-gradient(135deg,#ff7ad9,#7a6bff);border:0;box-shadow:0 6px 22px rgba(160,100,255,.55);font-size:18px;padding:12px 24px}
+.b.warn.on{background:linear-gradient(135deg,#ffb347,#ff5e62);border:0}
+.b:disabled{opacity:.4;cursor:not-allowed}
+.kk{display:flex;align-items:center;gap:6px}
+.log{margin-top:14px;padding:12px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--line);font-size:14px;line-height:1.7}
+.log h3{margin:0 0 6px;font-size:15px;color:var(--gold);font-weight:400}
+.log div{border-top:1px dashed var(--line);padding:3px 0}
+.log em{font-style:normal;color:#7ad7ff}
+.md{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;background:rgba(10,5,30,.7);backdrop-filter:blur(6px);padding:20px}
+.md.on{display:flex}
+.card{max-width:400px;width:100%;text-align:center;padding:26px 22px;border-radius:24px;background:linear-gradient(160deg,#3a1a78,#1a0e42);border:1px solid #ffffff30;box-shadow:0 20px 60px #000a,0 0 50px #8a5cff55;line-height:1.7}
+.card h2{margin:0 0 8px;font-size:28px;font-weight:400;color:var(--gold)}
+.card p{margin:6px 0;color:#e2d8ff}
+.card .b{margin:10px 4px 0}
+</style></head><body>
+<canvas id="fx"></canvas>
+<div class="app">
+<div class="top"><h1>💎 저울의 연금술사</h1><button class="b" id="mu" style="padding:6px 12px">🔊</button></div>
+<div class="hud"><span class="chip" id="hl"></span><span class="chip" id="hh"></span><span class="chip" id="hs"></span><span class="chip" id="hc"></span></div>
+<div class="task" id="task"></div>
+<div class="tries" id="tries"></div>
+<div class="stage"><div class="pillar"></div><div class="base"></div>
+<div class="beam" id="beam">
+<div class="arm l"><div class="pan"><div class="st"></div><div class="dish" id="dl"></div><div class="lab">◀ 왼쪽 접시</div></div></div>
+<div class="arm r"><div class="pan"><div class="st"></div><div class="dish" id="dr"></div><div class="lab">오른쪽 접시 ▶</div></div></div>
+</div></div>
+<div class="msg" id="msg"></div>
+<div class="tray" id="tray"></div>
+<div class="ctr">
+<button class="b main" id="wb">⚖️ 저울질!</button>
+<button class="b warn" id="ab">🔍 범인 지목</button>
+<button class="b" id="cb">비우기</button>
+</div>
+<div class="ctr"><span class="kk">자동 배치 <button class="b" id="km" style="padding:6px 12px">−</button><b id="kv">1</b><button class="b" id="kp" style="padding:6px 12px">＋</button> 개씩 <button class="b" id="kb" style="padding:6px 12px">적용</button></span></div>
+<div class="log" id="log"></div>
+</div>
+<div class="md" id="md"><div class="card" id="mc"></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const TW=[[4,2],[5,3],[6,3],[7,3],[8,4],[9,4]].map(a=>[...a,'t']),LI=[[3,3],[4,4],[5,4],[6,4],[7,4],[8,4]].map(a=>[...a,'l']),POOL=TW.concat(LI);
+const LV=[[3,1,'h'],[9,2,'h'],[4,2,'u'],[12,3,'h'],[27,3,'h'],[12,3,'u'],[13,3,'u'],[40,4,'h'],TW[0],TW[3],TW[5],LI[0],LI[2],LI[5]];
+function mkF(n,m){const a=R(n);if(m!='t')return[a];let b;do b=R(n);while(b==a);return[a,b]}
+function intro(m){S.seen=S.seen||{};if(S.seen[m])return;const T={t:'<h2>👯 새로운 규칙: 쌍둥이 가짜</h2><p>가짜가 <b>2개</b>예요! 둘 다 더 무거워요.<br>양쪽 접시에 하나씩 올라가면 <b>평형</b>이 나와서, 가짜가 없는 것처럼 보일 수 있어요.<br>정답은 가짜 <b>2개를 모두</b> 지목!</p>',l:'<h2>🤥 새로운 규칙: 거짓말쟁이 저울</h2><p>이 저울은 <b>딱 1번</b> 거짓 결과를 보여줘요.<br>언제인지는 아무도 몰라요!<br>결과를 그대로 믿을지, 확인할지 잘 생각하세요.</p>'}[m];if(!T)return;S.seen[m]=1;modal(T+'<button class="b main" onclick="$(\'#md\').classList.remove(\'on\')">도전! ▶</button>')}
+let S={lv:0,hearts:3,score:0,combo:0,best:0,top:1};
+try{const d=JSON.parse(localStorage.getItem('bal_alch')||'{}');S.best=d.best||0;S.top=d.top||1}catch(e){}
+function save(){try{localStorage.setItem('bal_alch',JSON.stringify({best:S.best,top:S.top}))}catch(e){}}
+let G,SP,mute=false,AC;
+const R=n=>Math.floor(Math.random()*n);
+function spec(l){if(l<LV.length)return LV[l];if(R(2))return POOL[R(POOL.length)];const k=3+R(2),m=R(2)?'h':'u';let lo,hi;if(m=='h'){lo=3**(k-1)+1;hi=Math.min(3**k,50)}else{lo=(3**(k-1)-1)/2+1;hi=Math.min((3**k-1)/2,40)}return[lo+R(hi-lo+1),k,m]}
+function snd(f,d=.12,s=0,t='sine',v=.07){if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),T=AC.currentTime+s;o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,T);g.gain.exponentialRampToValueAtTime(.0001,T+d);o.connect(g);g.connect(AC.destination);o.start(T);o.stop(T+d)}catch(e){}}
+const jw=()=>[523,659,784,1047,1319].forEach((f,i)=>snd(f,.25,i*.09,'triangle'));
+const jl=()=>[330,262,196].forEach((f,i)=>snd(f,.3,i*.16,'sawtooth',.05));
+function start(){SP=spec(S.lv);const[n,k,m]=SP;G={n,tries:k,mode:m,fakes:mkF(n,m),lieAt:m=='l'?R(k):-1,pk:[],dir:R(2)?1:-1,place:Array(n).fill(0),act:1,ans:false,log:[],busy:false,k:Math.max(1,Math.floor(n/3))};
+$('#beam').style.setProperty('--a','0deg');render();intro(m)}
+function w(i){return !G.fakes.includes(i)?1:G.mode=='u'?(G.dir>0?1.5:.5):2}
+const gem=(i,s,c='')=>`<b class="g ${c}" style="--h:${(i*137.5)%360};--s:${s}" data-i="${i}"><i>${i+1}</i></b>`;
+function render(){
+const{n,tries,mode,place}=G,L=[],Rr=[],T=[];place.forEach((p,i)=>(p==1?L:p==2?Rr:T).push(i));
+$('#hl').textContent='🏆 레벨 '+(S.lv+1);$('#hh').textContent='❤️'.repeat(S.hearts);$('#hs').textContent='⭐ '+S.score+(S.best?' / 최고 '+S.best:'');$('#hc').textContent=S.combo>1?'🔥 '+S.combo+'연속':'🔥 0';
+$('#task').innerHTML=({h:`보석 <b>${n}개</b> 중 <b>더 무거운</b> 가짜 1개를 찾아라!`,u:`보석 <b>${n}개</b> 중 무게가 <b>다른</b>(무겁거나 가벼운) 가짜 1개!`,t:`보석 <b>${n}개</b> 중 <b>쌍둥이 가짜 2개</b>(둘 다 더 무거움)!`,l:`보석 <b>${n}개</b> 중 더 무거운 가짜 1개!<br>⚠️ 저울이 <b>딱 1번 거짓말</b>을 해요`})[mode]+`<br>저울질은 단 <b>${SP[1]}번</b>`;
+$('#tries').innerHTML=Array.from({length:SP[1]},(_,i)=>`<span class="orb ${i<tries?'':'off'}"></span>`).join('');
+const sp=a=>a.length>10?18:24,ts=n>20?34:40;
+$('#dl').innerHTML=L.map(i=>gem(i,sp(L)+'px')).join('');$('#dr').innerHTML=Rr.map(i=>gem(i,sp(Rr)+'px')).join('');
+$('#dl').classList.toggle('act',G.act==1);$('#dr').classList.toggle('act',G.act==2);
+$('#tray').innerHTML=T.map(i=>gem(i,ts+'px',(G.ans?'sus ':'')+(G.pk.includes(i)?'pk':''))).join('')||'<span style="color:var(--mut)">모든 보석이 저울 위에 있어요</span>';
+const eq=L.length==Rr.length&&L.length>0;
+$('#wb').disabled=G.busy||G.ans||tries<1||!eq;$('#ab').classList.toggle('on',G.ans);$('#ab').disabled=G.busy||(tries<1);
+$('#msg').textContent=G.ans?'🔍 범인으로 의심되는 보석을 '+(mode=='t'?'2개 ':'')+'눌러 지목하세요!':(L.length!=Rr.length?'양쪽 접시의 개수를 같게 맞춰주세요':'접시를 눌러 선택한 뒤, 보석을 눌러 올리세요');
+$('#kv').textContent=G.k;
+$('#log').innerHTML='<h3>📜 저울 기록</h3>'+(G.log.length?G.log.map((e,i)=>`<div>${i+1}회: ${e.L.map(x=>x+1).join(' ')} ⚖ ${e.R.map(x=>x+1).join(' ')} → <em>${e.r}</em></div>`).reverse().join(''):'<div style="color:var(--mut)">아직 저울질을 하지 않았어요</div>');
+}
+function weigh(){if($('#wb').disabled)return;
+const L=[],Rr=[];G.place.forEach((p,i)=>p==1?L.push(i):p==2&&Rr.push(i));
+const a=L.reduce((s,i)=>s+w(i),0),b=Rr.reduce((s,i)=>s+w(i),0);
+let o=Math.abs(a-b)<1e-9?2:a>b?0:1;if(G.mode=='l'&&SP[1]-G.tries==G.lieAt)o=(o+1+R(2))%3;
+const r=['◀ 왼쪽이 무거움','▶ 오른쪽이 무거움','＝ 평형'][o];
+G.busy=true;G.tries--;G.log.push({L,R:Rr,r});
+$('#beam').style.setProperty('--a',['-17deg','17deg','0deg'][o]);
+snd(180,.5,0,'triangle');snd(r[0]=='＝'?440:330,.3,.9,'sine');render();
+setTimeout(()=>{G.place.fill(0);G.busy=false;$('#beam').style.setProperty('--a','0deg');
+if(G.tries<1){G.ans=true}render();if(G.tries<1)msg2()},1700)}
+function msg2(){$('#msg').textContent='저울질 끝! 이제 범인을 지목하세요 🔍'}
+function modal(h){$('#mc').innerHTML=h;$('#md').classList.add('on')}
+function pickGem(i){const k=G.pk.indexOf(i);if(k>=0)G.pk.splice(k,1);else G.pk.push(i);snd(700,.06);if(G.pk.length>=G.fakes.length)submit();else render()}
+function submit(){if(G.busy)return;G.busy=true;const ok=G.pk.every(x=>G.fakes.includes(x));
+const dirTxt=G.mode=='u'&&G.dir<0?'더 가벼웠어요':'더 무거웠어요';
+if(ok){const left=G.tries,pts=100*(S.lv+1)+60*left+25*S.combo;S.score+=pts;S.combo++;let bonus='';
+S.lv++;if(S.lv%3==0&&S.hearts<5){S.hearts++;bonus='<p>❤️ 보너스 하트 +1!</p>'}
+S.best=Math.max(S.best,S.score);S.top=Math.max(S.top,S.lv+1);save();jw();burst(innerWidth/2,innerHeight/3,140);setTimeout(()=>burst(innerWidth/4,innerHeight/2,70),250);setTimeout(()=>burst(innerWidth*.75,innerHeight/2,70),450);
+modal(`<h2>✨ 정답! ✨</h2><p>${G.fakes.map(x=>x+1).join('·')}번 보석이 가짜였어요!</p><p>남은 저울질 ${left}회 → <b style="color:var(--gold)">+${pts}점</b></p>${bonus}<button class="b main" onclick="nx()">다음 레벨 ▶</button>`)}
+else{S.hearts--;S.combo=0;jl();S.best=Math.max(S.best,S.score);save();
+const t=`<p>진짜 범인은 <b style="color:var(--gold)">${G.fakes.map(x=>x+1).join('·')}번</b> 보석 (${dirTxt})</p>`;
+modal(S.hearts>0?`<h2>💔 아쉬워요</h2>${t}<p>같은 난이도, 새로운 가짜로 다시 도전!</p><button class="b main" onclick="nx()">다시 도전 ↻</button>`:`<h2>💀 게임 오버</h2>${t}<p>도달 레벨 ${S.lv+1} · 점수 ${S.score}<br>최고 기록 ${S.best}</p><button class="b main" onclick="rs2()">처음부터 ↻</button>`)}}
+function nx(){$('#md').classList.remove('on');start()}
+function rs2(){S.lv=0;S.hearts=3;S.score=0;S.combo=0;nx()}
+document.addEventListener('click',e=>{if(!G||G.busy&&!e.target.closest('.g'))return;
+const g=e.target.closest('.g');
+if(g){if(G.busy)return;const i=+g.dataset.i;if(G.ans)return pickGem(i);if(G.place[i]==0){G.place[i]=G.act;snd(640,.08)}else{G.place[i]=0;snd(420,.08)}render();return}
+const d=e.target.closest('.dish');if(d){G.act=d.id=='dl'?1:2;snd(500,.05);render()}});
+$('#wb').onclick=weigh;
+$('#ab').onclick=()=>{if(G.tries<1)return;G.ans=!G.ans;G.pk=[];if(G.ans)G.place.fill(0);snd(700,.08);render()};
+$('#cb').onclick=()=>{if(G.busy)return;G.place.fill(0);render()};
+$('#km').onclick=()=>{G.k=Math.max(1,G.k-1);render()};
+$('#kp').onclick=()=>{G.k=Math.min(Math.floor(G.n/2),G.k+1);render()};
+$('#kb').onclick=()=>{if(G.busy||G.ans)return;G.place.fill(0);for(let i=0;i<G.k;i++){G.place[i]=1;G.place[G.k+i]=2}snd(560,.1);render()};
+$('#mu').onclick=()=>{mute=!mute;$('#mu').textContent=mute?'🔇':'🔊'};
+const cv=$('#fx'),cx=cv.getContext('2d');let W,H,P=[],ST=[];
+function rz(){W=cv.width=innerWidth;H=cv.height=innerHeight}addEventListener('resize',rz);rz();
+for(let i=0;i<70;i++)ST.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.4,s:Math.random()*.4+.1,p:Math.random()*6});
+function burst(x,y,n){for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*9+3;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-5,h:Math.random()*360,l:70+Math.random()*40,r:Math.random()*5+3})}}
+function loop(t){cx.clearRect(0,0,W,H);for(const s of ST){s.y-=s.s;if(s.y<0){s.y=H;s.x=Math.random()*W}cx.globalAlpha=.35+.4*Math.sin(t/600+s.p);cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill()}
+P=P.filter(p=>p.l>0);for(const p of P){p.x+=p.vx;p.y+=p.vy;p.vy+=.25;p.vx*=.99;p.l--;cx.fillStyle=`hsl(${p.h} 100% 60%)`;cx.globalAlpha=Math.min(1,p.l/30);cx.fillRect(p.x,p.y,p.r,p.r*1.6)}requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+start();
+modal(`<h2>💎 저울의 연금술사</h2><p>보석 속에 <b style="color:var(--gold)">가짜 1개</b>가 숨어 있어요.<br>정해진 횟수 안에 양팔저울로 찾아내세요!</p><p style="font-size:14px;color:var(--mut)">접시를 눌러 선택 → 보석을 눌러 올리기<br>양쪽 개수는 같아야 해요<br>정답을 틀리면 ❤️ 하나 감소!<br>끝까지 가면 무한 도전이 이어집니다</p><button class="b main" onclick="$('#md').classList.remove('on');snd(660,.1)">시작하기 ▶</button>`);
+</script></body></html>
